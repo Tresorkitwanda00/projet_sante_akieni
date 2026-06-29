@@ -200,26 +200,6 @@ if m5_stock <= m5_seuil_rupture: alertes_rupture += 1
 
 # === SECTION E : RAPPORT D'INVENTAIRE =======================
 
-# print("==================================================")
-
-# print("      RAPPORT INITIAL DU SYSTEME DE SANTE         ")
-
-# print("==================================================")
-
-# print(f"Population totale couverte : {total_population:,} habitants")
-
-# print(f"Taux d'occupation des lits : {taux_occupation_global:.2f}%")
-
-# print(f"Densité médicale globale   : {densite_medicale_globale:.3f} médecins / 1000 hab. (Seuil OMS: {SEUIL_OMS_DENSITE_MEDICALE})")
-
-# print("--------------------------------------------------")
-
-# print(f"Valeur totale du stock     : {valeur_stock_usd:.2f} USD ({valeur_stock_fcfa:,.0f} FCFA)")
-
-# print(f"Médicaments en alerte stock: {alertes_rupture} / 5")
-
-# print("==================================================")
-
 #===SECTION F : CLASSIFICATION STATUT STOCKS (NEW S3) (if/elif/else)
 
 # RÈGLES DE GESTION — STOCK DES MÉDICAMENTS :
