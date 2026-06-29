@@ -21,7 +21,7 @@ douleur = int(input('Douleur /10 (0=aucune, 10=insupportable) : '))
 # --- VALIDATION DES PLAGES (S2 + S3 : conditions simples) ---
 
 # Verifier que la temperature est dans une plage physiologiquement possible
-if not temperature < 35.0 or temperature > 43.0:
+if not temperature < 35.0 and temperature > 43.0:
  print('ERREUR : Valeur de temperature impossible — verifier la saisie')
 
 # Validation du nom entre par l'utilisateur 
