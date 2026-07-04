@@ -91,8 +91,3 @@ print('Zones ORANGES :', zones_oranges)
 print('Zones ROUGES :', zones_rouges)
 
 print('=======================================')
-<<<<<<< HEAD
-
-
-=======
->>>>>>> ff0a10ba6b0afeeaf71ce642975d84f3a033489b
