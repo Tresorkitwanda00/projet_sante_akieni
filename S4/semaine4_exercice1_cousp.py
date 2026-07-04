@@ -11,7 +11,7 @@ zones_jaunes = 0
 zones_oranges = 0
 zones_rouges = 0
 
-nb_districts = 3
+nb_districts = 9
 
 # ==========================================================
 # BOUCLE SUR LES DISTRICTS
@@ -91,3 +91,5 @@ print('Zones ORANGES :', zones_oranges)
 print('Zones ROUGES :', zones_rouges)
 
 print('=======================================')
+
+
