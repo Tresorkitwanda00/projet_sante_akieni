@@ -11,7 +11,8 @@ zones_jaunes = 0
 zones_oranges = 0
 zones_rouges = 0
 
-nb_districts = 9
+nb_districts = 2
+liste_departements = []
 
 # ==========================================================
 # BOUCLE SUR LES DISTRICTS
@@ -20,6 +21,7 @@ for i in range(1, nb_districts + 1):
     print('--- District', i, '---')
 
     nom_district = input('Nom du district : ')
+
     suspects = int(input('Cas suspects : '))
     confirmes = int(input('Cas confirmes : '))
     deces = int(input('Deces : '))
@@ -52,6 +54,7 @@ for i in range(1, nb_districts + 1):
         alerte = 'JAUNE'
         zones_jaunes = zones_jaunes + 1
 
+
     else:
         alerte = 'VERT'
         zones_vertes = zones_vertes + 1
@@ -71,7 +74,7 @@ for i in range(1, nb_districts + 1):
     print(' Actifs :', cas_actifs)
     print(' Letalite :', round(letalite, 1), '%')
     print()
-
+#============ fin =========================
 # ==========================================================
 # RAPPORT NATIONAL
 # ==========================================================
@@ -91,8 +94,3 @@ print('Zones ORANGES :', zones_oranges)
 print('Zones ROUGES :', zones_rouges)
 
 print('=======================================')
-<<<<<<< HEAD
-
-
-=======
->>>>>>> ff0a10ba6b0afeeaf71ce642975d84f3a033489b
