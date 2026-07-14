@@ -59,7 +59,7 @@ for i in range(0, nb_districts):
     #   Creation d'une dictionnaire des infos
     dict_informations = {
         'nom_district':nom_district,
-        'cas_suspects':suspects,
+        'cas_suspects':suspect,
         'departement':departement,
         'cas_confirmes':confirmes,
         'deces':deces
