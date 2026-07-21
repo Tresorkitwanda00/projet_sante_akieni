@@ -7,8 +7,7 @@ Description : Calculatrice scientifique, intelligente et pédagogique.
 # ==============================================================================
 #  SECTION 1 : IMPORTS ET INITIALISATIONS DE L'ENVIRONNEMENT
 # Chargement des modules natifs, dépendances externes et moteur de rendu Rich.
-# ==============================================================================
-import sys
+# =============================================================================
 import math
 import random
 from rich import print
