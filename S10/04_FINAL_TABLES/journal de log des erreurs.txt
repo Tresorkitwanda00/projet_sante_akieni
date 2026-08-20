@@ -1,0 +1,95 @@
+Journal de log erreur : 
+Msg 4861, Niveau 16, État 1, Ligne 13
+Cannot bulk load because the file "D:\Database\archive\olist_customers_dataset.csv" could not be opened. Operating system error code 32(Le processus ne peut pas accéder au fichier car ce fichier est utilisé par un autre processus.).
+
+Heure de fin : 2026-08-18T10:52:26.4380631+02:00
+1. solution soit : ferme le fichier csv si il est ouvert
+
+2 erreur :
+Msg 4866, Niveau 16, État 8, Ligne 13
+The bulk load failed. The column is too long in the data file for row 1, column 5. Verify that the field terminator and row terminator are specified correctly.
+Msg 7301, Niveau 16, État 2, Ligne 13
+Cannot obtain the required interface ("IID_IColumnsInfo") from OLE DB provider "BULK" for linked server "(null)".
+
+Heure de fin : 2026-08-18T11:01:46.9547812+02:00
+ sol: 
+(Si 0x0a échoue encore, remplace simplement par ROWTERMINATOR = '\r\n').
+
+Pourquoi cette erreur s'est produite (Analyse)
+ROWTERMINATOR = '\n' s'est fait ignorer : SQL Server sur Windows attend par défaut un retour chariot suivi d'un saut de ligne (\r\n). Si le CSV contient uniquement \n, SQL Server ne détecte pas la fin de la ligne 1 et continue de lire la ligne 2 comme si c'était toujours la colonne 5 de la ligne 1.
+
+Débordement de colonne : La colonne 5 devient alors géante (elle accumule plusieurs lignes), ce qui dépasse la taille maximale définie dans ta table Staging et provoque le message "column is too long".
+
+3erreur : Msg 245, Niveau 16, État 1, Ligne 1
+Conversion failed when converting the varchar value '"14409"' to data type int.
+
+Heure de fin : 2026-08-18T12:43:47.6699636+02:00
+L'erreur Msg 245 (Conversion failed when converting the varchar value '"14409"' to data type int) est très révélatrice.
+
+Regarde attentivement la valeur dans le message d'erreur : '"14409"'.
+Les guillemets doubles (") font partie intégrante de la chaîne de texte !
+Le fichier CSV entoure les valeurs par des guillemets (ex: "14409" au lieu de 14409), donc la fonction CAST('"14409"' AS INT) échoue parce que SQL Server n'arrive pas à convertir les guillemets en nombre.
+
+remarque :
+Excellente observation ! C'est exactement le genre de cas où le réflexe Observer → Formuler une hypothèse → Tester prend tout son sens.
+
+1. Observation & Diagnostic du Problème
+En regardant les lignes problématiques :
+
+rio grande do sul, brasil",RS
+
+rio de janeiro, brasil",RJ
+
+Que s'est-il passé ?
+Dans le fichier CSV source, le nom de la ville contient une virgule (ex: rio de janeiro, brasil).
+Comme le séparateur de colonnes est lui-même la virgule (,), le BULK INSERT s'est fait piéger :
+
+La virgule située à l'intérieur de la ville a été interprétée comme un changement de colonne !
+
+Le texte "brasil" s'est retrouvé décalé dans la colonne seller_state.
+
+Le code d'état réel (RS, RJ) s'est retrouvé poussé en dehors des colonnes ou accolé à la fin.
+
+2. Hypothèse & Solution
+Pour que SQL Server comprenne qu'une virgule située à l'intérieur de guillemets fait partie du texte et n'est pas un séparateur de colonne, il faut ajouter l'option FIELDQUOTE = '"' dans la commande BULK INSERT.
+
+Script de correction du BULK INSERT :
+Vide d'abord la table de staging, puis réexécute l'importation avec l'option FIELDQUOTE :
+
+SQL
+-- 1. Vider la staging
+TRUNCATE TABLE staging_sellers;
+
+-- 2. Réimporter avec la gestion des guillemets
+BULK INSERT staging_sellers
+FROM 'D:\Database\archive\olist_sellers_dataset.csv'
+WITH (
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '0x0a',
+    FIELDQUOTE = '"',        -- Indique à SQL Server que les champs entre guillemets contiennent des virgules
+    FIRSTROW = 2,
+    CODEPAGE = '65001',
+    TABLOCK
+);
+Msg 207, Niveau 16, État 1, Ligne 33
+Invalid column name 'product_name_length'.
+Msg 207, Niveau 16, État 1, Ligne 34
+Invalid column name 'product_description_length'.
+
+Heure de fin : 2026-08-18T15:39:33.8645685+02:00
+Msg 245, Niveau 16, État 1, Ligne 19
+Conversion failed when converting the varchar value '225.00' to data type int.
+ erreur :Msg 7301, Niveau 16, État 2, Ligne 15
+Cannot obtain the required interface ("IID_IColumnsInfo") from OLE DB provider "BULK" for linked server "(null)".
+
+(1 ligne affectée)
+
+(0 lignes affectées)
+
+Heure de fin : 2026-08-19T09:21:07.2589285+02:00
+5
+Msg 2627, Niveau 14, État 1, Ligne 2
+Violation of PRIMARY KEY constraint 'PK__order_re__60883D908441B604'. Cannot insert duplicate key in object 'dbo.order_reviews'. The duplicate key value is (00130cbe1f9d422698c812ed8ded1919).
+The statement has been terminated.
+
+Heure de fin : 2026-08-19T13:42:03.0155842+02:00

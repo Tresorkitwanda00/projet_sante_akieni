@@ -1,5 +1,4 @@
 
-
 -- Exercice 1
 CREATE DATABASE LigueFootball;
 GO
